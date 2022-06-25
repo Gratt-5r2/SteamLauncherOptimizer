@@ -29,37 +29,24 @@ int __stdcall CreateHardLinkA_2_CreateSymbolicLinkA( const char* lpFileName, con
 }
 
 
-ulong GetImageBase( HMODULE module ) {
+bool GetModuleRangeInformation( HMODULE module, ulong& base, ulong& size ) {
   MODULEINFO module_info; memset( &module_info, 0, sizeof( module_info ) );
   if( GetModuleInformation( GetCurrentProcess(), module, &module_info, sizeof( module_info ) ) ) {
-    return (ulong)module_info.lpBaseOfDll;
+    base = (ulong)module_info.lpBaseOfDll;
+    size = (ulong)module_info.SizeOfImage;
+    return true;
   }
 
-  return 0x10000000;
-}
-
-ulong GetImageSize( HMODULE module ) {
-  MODULEINFO module_info; memset( &module_info, 0, sizeof( module_info ) );
-  if( GetModuleInformation( GetCurrentProcess(), module, &module_info, sizeof( module_info ) ) ) {
-    return (ulong)module_info.SizeOfImage;
-  }
-
-  return 0x00000000;
+  return false;
 }
 
 
 void CollectPeSections( HMODULE module, vector<PeSection>& sections ) {
   IMAGE_NT_HEADERS* ntHeader = ImageNtHeader( module );
   IMAGE_SECTION_HEADER* sectionHeader = (IMAGE_SECTION_HEADER*)(ntHeader + 1);
-  ulong imageBase = GetImageBase( module ); // ntHeader->OptionalHeader.ImageBase;
-  ulong imageLength = GetImageSize( module ); // ntHeader->OptionalHeader.SizeOfImage;
-
-  string m1 = UltoA( imageBase, 16 );
-  string m2 = UltoA( imageLength, 10 );
-
-  ulong imageEnd = imageBase + imageLength;
-
-
+  ulong imageBase, imageLength;
+  if( !GetModuleRangeInformation( module, imageBase, imageLength ) )
+    return;
 
   ulong segments = ntHeader->FileHeader.NumberOfSections;
   for( ulong i = 0; i < segments; i++ ) {
