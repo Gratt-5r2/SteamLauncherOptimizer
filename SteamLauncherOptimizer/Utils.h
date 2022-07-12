@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <iostream>
 #include <vector>
+#include <io.h>
 using namespace std;
 
 typedef unsigned long ulong;
@@ -39,3 +40,35 @@ struct PeSection {
     Length = 0;
   }
 };
+
+bool FileExists( const char* fileName ) {
+  return _access( fileName, 0 ) == 0;
+}
+
+bool DeleteFileSafe( const char* fileName ) {
+  if( !FileExists( fileName ) )
+    return true;
+
+  for( size_t i = 0; i < 10; i++ ) {
+    if( DeleteFile( fileName ) )
+      return true;
+
+    Sleep( 10 );
+  }
+
+  return false;
+}
+
+bool RenameFileSafe( const char* fileNameOld, const char* fileNameNew ) {
+  if( !FileExists( fileNameOld ) )
+    return false;
+
+  for( size_t i = 0; i < 10; i++ ) {
+    if( rename( fileNameOld, fileNameNew ) == 0 )
+      return true;
+
+    Sleep( 10 );
+  }
+
+  return false;
+}

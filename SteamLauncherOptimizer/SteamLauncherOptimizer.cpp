@@ -103,11 +103,35 @@ void PatchCalls() {
   }
 }
 
+const long MaxLogSize = 1024 * 1024 * 5;
+
+bool CheckLogSize() {
+  const char* logFileName = "logs.txt";
+  const char* logPrevFileName = "logs_prev.txt";
+  if( !FileExists( logFileName ) )
+    return true;
+
+  FILE* file = fopen( "logs.txt", "rb+" );
+  if( !file )
+    return false;
+
+  fseek( file, 0, SEEK_END );
+  long fileSize = ftell( file );
+  fclose( file );
+  if( fileSize >= MaxLogSize ) {
+    DeleteFileSafe( logPrevFileName );
+    return RenameFileSafe( logFileName, logPrevFileName );
+  }
+
+  return true;
+}
+
 extern string GetSpecialPath( int index );
 
 int __stdcall DllMain( HMODULE hModule, DWORD fdwReason, LPVOID lpvReserved ) {
   if( fdwReason == DLL_PROCESS_ATTACH ) {
     PatchCalls();
+    CheckLogSize();
   }
   if( fdwReason == DLL_PROCESS_DETACH ) {
 
