@@ -51,8 +51,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,1
- PRODUCTVERSION 1,0,0,1
+ FILEVERSION 1,1,1,1
+ PRODUCTVERSION 1,1,1,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -69,12 +69,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "WOG RU COMMUNITY"
             VALUE "FileDescription", "Patch for the Mod Launcher"
-            VALUE "FileVersion", "1.0.0.1"
+            VALUE "FileVersion", "1.1.1.1"
             VALUE "InternalName", "SteamLau.dll"
             VALUE "LegalCopyright", "Gratt (C) 2022"
             VALUE "OriginalFilename", "SteamLau.dll"
             VALUE "ProductName", "Steam Launcher Optimizer"
-            VALUE "ProductVersion", "1.0.0.1"
+            VALUE "ProductVersion", "1.1.1.1"
         END
     END
     BLOCK "VarFileInfo"

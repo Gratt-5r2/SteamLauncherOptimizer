@@ -19,13 +19,19 @@ string UltoA( ulong i, int rad ) {
 
 
 int __stdcall CreateHardLinkA_2_CreateSymbolicLinkA( const char* lpFileName, const char* lpExistingFileName, LPSECURITY_ATTRIBUTES lpSecurityAttributes ) {
-  if( CreateSymbolicLinkA( lpFileName, lpExistingFileName, 0x0 ) )
+  // Safe symbolic link creation. The existence of the file is checked for Linux.
+  if( CreateSymbolicLinkA( lpFileName, lpExistingFileName, 0x0 ) && FileExists( lpFileName ) )
     return 1;
-
-  if( CreateSymbolicLinkA( lpFileName, lpExistingFileName, 0x2 ) )
+  
+  if( CreateSymbolicLinkA( lpFileName, lpExistingFileName, 0x2 ) && FileExists( lpFileName ) )
     return 1;
   
   return CreateHardLinkA( lpFileName, lpExistingFileName, lpSecurityAttributes );
+}
+
+
+int __stdcall SetWindowTextWithSign( HWND hWnd, LPCWSTR lpString ) {
+  return SetWindowTextW( hWnd, wstring( lpString ).append( L" (optimized)" ).c_str() );
 }
 
 
@@ -85,6 +91,12 @@ void ReplaceInt( const ulong& oldInt, const ulong& newInt, PeSection& section ) 
 }
 
 
+FARPROC __stdcall GetProcAddressSafe( LPCSTR libName, LPCSTR procName ) {
+  HMODULE lib = LoadLibrary( libName );
+  return GetProcAddress( lib, procName );
+}
+
+
 void PatchCalls() {
   vector<PeSection> sections;
   CollectPeSections( GetModuleHandle( nullptr ), sections );
@@ -95,10 +107,8 @@ void PatchCalls() {
       ReplaceText( ".vdf", ".???", section );
       ReplaceText( ".mod", ".???", section );
 
-      HMODULE kernel32 = GetModuleHandle( "kernel32.dll" );
-      ulong procCreateHardLinkA = (ulong)GetProcAddress( kernel32, "CreateHardLinkA" );
-      ulong procCreateSymLinkA = (ulong)CreateHardLinkA_2_CreateSymbolicLinkA;
-      ReplaceInt( procCreateHardLinkA, procCreateSymLinkA, section );
+      ReplaceInt( (ulong)GetProcAddressSafe( "kernel32.dll", "CreateHardLinkA" ), (ulong)CreateHardLinkA_2_CreateSymbolicLinkA, section );
+      ReplaceInt( (ulong)GetProcAddressSafe( "user32.dll", "SetWindowTextW" ), (ulong)SetWindowTextWithSign, section );
     }
   }
 }
