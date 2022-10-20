@@ -1,4 +1,4 @@
-# Steam Launcher Optimizer
+# Steam: Workshop Launcher Optimizer for Gothic 1 and Gothic 2
 ## Installation and launching
 * Place the d3d11.dll into the Launcher directory (Gothic\Launcher).  
 * If you have the workshop and the game on different disks (physical or logical), you should start the launcher as Admin.
