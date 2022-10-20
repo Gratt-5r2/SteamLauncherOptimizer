@@ -1,7 +1,7 @@
 # Steam Launcher Optimizer
 ## Installation and launching
-Place the d3d11.dll into the Launcher directory (Gothic\Launcher).  
-If you have the workshop and the game on different disks (physical or logical), you should start the launcher as Admin.
+* Place the d3d11.dll into the Launcher directory (Gothic\Launcher).  
+* If you have the workshop and the game on different disks (physical or logical), you should start the launcher as Admin.
 
 ## Improvements
 **1. Instant mod launching.**  
