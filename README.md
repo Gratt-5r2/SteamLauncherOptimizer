@@ -1,5 +1,5 @@
 # Steam Launcher Optimizer
-## Installation and launch
+## Installation and launching
 Place the d3d11.dll into the Launcher directory (Gothic\Launcher).  
 If you have the workshop and the game on different disks (physical or logical), you should start the launcher as Admin.
 
@@ -21,3 +21,4 @@ The solved problem: The launcher logs has no limits. After the year of the activ
   
 Instead of coping the data, the optimizer will use the hard links or the symbolic links to read the data directly from the workshop.  
 The symbolic links is used when the game and the workshop installed on the different disks. **But for that you must start the launcher as Admin!**
+
