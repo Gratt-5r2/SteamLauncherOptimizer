@@ -19,6 +19,6 @@ The solved problem: The launcher changes the timestamps of Steam modifications. 
 **5. Logs size limitation.**  
 The solved problem: The launcher logs has no limits. After the year of the active use launcher you can get 1gb of logs.  
   
-Instead of coping the data, the optimizer will use the hard links or the symbolic links to read the data directly from the workshop.  
-The symbolic links is used when the game and the workshop installed on the different disks. **But for that you must start the launcher as Admin!**
+Instead of coping the data, the optimizer uses the hard links or the symbolic links to read the data directly from the workshop.  
+The symbolic links uses when the game and the workshop installed on the different disks. **But for that you must start the launcher as Admin!**
 
