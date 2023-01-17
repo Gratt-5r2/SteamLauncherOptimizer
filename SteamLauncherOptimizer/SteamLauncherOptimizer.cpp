@@ -35,6 +35,24 @@ int __stdcall SetWindowTextWithSign( HWND hWnd, LPCWSTR lpString ) {
 }
 
 
+int __stdcall CreateStarterProcess( LPCSTR lpApplicationName, LPSTR lpCommandLine, LPSECURITY_ATTRIBUTES lpProcessAttributes,
+                                    LPSECURITY_ATTRIBUTES lpThreadAttributes, int bInheritHandles, DWORD dwCreationFlags, LPVOID lpEnvironment,
+                                    LPCSTR lpCurrentDirectory, LPSTARTUPINFOA lpStartupInfo, LPPROCESS_INFORMATION lpProcessInformation ) {
+
+  if( std::string( lpCommandLine ).find( "-game:GothicGame.ini" ) != std::string::npos ) {
+    if( _access( "GothicStarter.exe", 0 ) == 0 ) {
+      int ok = MessageBoxA( 0, "Would you like to run a classic 'GothicStarter' with Steam Workshop support?", "Starting the game", MB_YESNO | MB_ICONQUESTION );
+      if( ok == IDYES )
+        lpCommandLine = const_cast<char*>("GothicStarter.exe");
+    }
+  }
+
+  return CreateProcessA( lpApplicationName, lpCommandLine, lpProcessAttributes,
+                         lpThreadAttributes, bInheritHandles, dwCreationFlags, 
+                         lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation );
+}
+
+
 bool GetModuleRangeInformation( HMODULE module, ulong& base, ulong& size ) {
   MODULEINFO module_info; memset( &module_info, 0, sizeof( module_info ) );
   if( GetModuleInformation( GetCurrentProcess(), module, &module_info, sizeof( module_info ) ) ) {
@@ -109,6 +127,7 @@ void PatchCalls() {
 
       ReplaceInt( (ulong)GetProcAddressSafe( "kernel32.dll", "CreateHardLinkA" ), (ulong)CreateHardLinkA_2_CreateSymbolicLinkA, section );
       ReplaceInt( (ulong)GetProcAddressSafe( "user32.dll", "SetWindowTextW" ), (ulong)SetWindowTextWithSign, section );
+      ReplaceInt( (ulong)GetProcAddressSafe( "kernel32.dll", "CreateProcessA" ), (ulong)CreateStarterProcess, section );
     }
   }
 }
