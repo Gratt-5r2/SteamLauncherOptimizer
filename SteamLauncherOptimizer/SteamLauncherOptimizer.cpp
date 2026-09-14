@@ -47,8 +47,15 @@ int __stdcall CreateStarterProcess( LPCSTR lpApplicationName, LPSTR lpCommandLin
     }
   }
 
-  return CreateProcessA( lpApplicationName, lpCommandLine, lpProcessAttributes,
-                         lpThreadAttributes, bInheritHandles, dwCreationFlags, 
+  string commandLine = string( lpCommandLine );
+
+  for (int i = 1; i < __argc; ++i) {
+    commandLine += " ";
+    commandLine += __argv[i];
+  }
+
+  return CreateProcessA( lpApplicationName, commandLine.data(), lpProcessAttributes,
+                         lpThreadAttributes, bInheritHandles, dwCreationFlags,
                          lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation );
 }
 
