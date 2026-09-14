@@ -35,11 +35,6 @@ int __stdcall SetWindowTextWithSign( HWND hWnd, LPCWSTR lpString ) {
 }
 
 
-vector<string> GetUserArgs () {
-  if (__argc <= 1) return {};
-  return std::vector<std::string>(__argv + 1, __argv + __argc);
-}
-
 int __stdcall CreateStarterProcess( LPCSTR lpApplicationName, LPSTR lpCommandLine, LPSECURITY_ATTRIBUTES lpProcessAttributes,
                                     LPSECURITY_ATTRIBUTES lpThreadAttributes, int bInheritHandles, DWORD dwCreationFlags, LPVOID lpEnvironment,
                                     LPCSTR lpCurrentDirectory, LPSTARTUPINFOA lpStartupInfo, LPPROCESS_INFORMATION lpProcessInformation ) {
@@ -54,13 +49,12 @@ int __stdcall CreateStarterProcess( LPCSTR lpApplicationName, LPSTR lpCommandLin
 
   string commandLine = string( lpCommandLine );
 
-  vector<string> userArgs = GetUserArgs();
-  for(int i=0; i < userArgs.size(); i++){
-    commandLine.append(" ");
-    commandLine.append(userArgs[i]);
+  for (int i = 1; i < __argc; ++i) {
+    commandLine += " ";
+    commandLine += __argv[i];
   }
 
-  return CreateProcessA( lpApplicationName, commandLine.c_str(), lpProcessAttributes,
+  return CreateProcessA( lpApplicationName, commandLine.data(), lpProcessAttributes,
                          lpThreadAttributes, bInheritHandles, dwCreationFlags,
                          lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation );
 }
